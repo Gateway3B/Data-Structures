@@ -1,0 +1,132 @@
+import java.util.LinkedList;
+
+public class SparseMatrix implements SparseInterface{
+	
+	int size;
+	LinkedList<MatrixElement> matrix = new LinkedList<MatrixElement>();
+	
+	public SparseMatrix()
+	{
+		this.size = 5;
+	}
+	
+	public void clear()
+	{
+		matrix.clear();
+	}
+	
+	public void setSize(int size)
+	{
+		matrix.clear();
+		this.size = size;
+	}
+	
+	public void addElement(int row, int col, int data)
+	{
+		int i;
+		for(i = 0; i < matrix.size(); ++i)
+		{
+			if(matrix.get(i).row == row && matrix.get(i).col == col)
+			{
+				matrix.get(i).data = data;
+				break;
+			}
+		}
+		if(i == matrix.size())
+		{
+			matrix.add(0, new MatrixElement(row, col, data));
+		}
+	}
+	
+	public void removeElement(int row, int col)
+	{
+		for(int i = 0; i<this.size; ++i)
+		{
+			if(matrix.get(i).row == row && matrix.get(i).col == col)
+			{
+				matrix.remove(i);
+			}
+		}
+	}
+
+	public int getElement(int row, int col)
+	{
+		for(int i = 0; i<this.matrix.size(); ++i)
+		{
+			if(matrix.get(i).row == row && matrix.get(i).col == col)
+			{
+				return matrix.get(i).data;
+			}
+		}
+		return 0;
+	}
+	
+	public SparseMatrix minor(int row, int col)
+	{
+		//LinkedList<MatrixElement> matrix1 = new LinkedList<MatrixElement>();
+		SparseMatrix minor = new SparseMatrix();
+		minor.setSize(this.getSize()-1);
+		for(int i = 0; i < this.matrix.size(); ++i)
+		{
+			if(row > matrix.get(i).row && col > matrix.get(i).col)
+			{
+				minor.addElement(matrix.get(i).row, matrix.get(i).col, matrix.get(i).data);
+			}else if(row < matrix.get(i).row && col > matrix.get(i).col)
+			{
+				minor.addElement(matrix.get(i).row-1, matrix.get(i).col, matrix.get(i).data);
+			}else if(col < matrix.get(i).col && row > matrix.get(i).row)
+			{
+				minor.addElement(matrix.get(i).row, matrix.get(i).col-1, matrix.get(i).data);
+			}else if(col < matrix.get(i).col && row < matrix.get(i).row)
+			{
+				minor.addElement(matrix.get(i).row-1, matrix.get(i).col-1, matrix.get(i).data);
+			}
+		}
+		return minor;
+	}
+	
+	public int determinant()
+	{
+		if(this.size == 2)
+		{
+			return (this.getElement(0, 0) * this.getElement(1, 1)) - (this.getElement(0, 1) * this.getElement(1,  0));
+		}
+		int det = 0;
+		for(int col = 0; col < this.size; ++col)
+		{
+			det += this.minor(0, col).determinant() * this.getElement(0, col) * ((int)java.lang.Math.pow(-1,col));
+		}
+		return det;
+	}
+	
+	public String toString()
+	{
+		String str = "";
+		for(int row = 0; row < this.size; ++row)
+		{
+			for(int col = 0; col < this.size; ++col)
+			{
+				str += this.getElement(row, col) + "\t";
+			}
+			str += "\n";
+		}
+		return str;
+	}
+	
+	public int getSize()
+	{
+		return this.size;
+	}
+
+
+public static void main(String args[])
+{
+	
+	SparseMatrix a = new SparseMatrix();
+	a.addElement(0, 0, 1);a.addElement(1, 1, 2);a.addElement(2, 2, 3);a.addElement(3, 3, 4);a.addElement(4, 4, 5);
+	System.out.println(a.toString());
+	System.out.println(a.determinant());
+	
+	
+}
+}

@@ -1,0 +1,14 @@
+
+public class MatrixElement {
+	
+	int value;
+	int distForward;
+	int distBackward;
+	
+	public MatrixElement(int value, int distForward, int distBackward)
+	{
+		this.value = value;
+		this.distForward = distForward;
+		this.distBackward = distBackward;
+	}
+}

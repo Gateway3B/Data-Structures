@@ -1,0 +1,63 @@
+import java.util.LinkedList;
+
+public class Matrix {
+	
+	int size;
+	LinkedList<MatrixElement> matrix = new LinkedList<MatrixElement>();
+	
+	public Matrix()
+	{
+		
+	}
+	
+	public void clear()
+	{
+		matrix.clear();
+	}
+	
+	public void setSize(int size)
+	{
+		this.size = size;
+	}
+	
+	public void setElement(int row, int col, int data)
+	{
+		matrix.add(0, new MatrixElement(row, col, data));
+	}
+	
+	public void removeElement(int row, int col)
+	{
+		for(int i = 0; i<matrix.size(); ++i)
+		{
+			if(matrix.get(i).row == row && matrix.get(i).col == col)
+			{
+				matrix.remove(i);
+			}
+		}
+	}
+
+	public int getElement(int row, int col)
+	{
+		return 0;
+	}
+	
+	public Matrix minor()
+	{
+		
+	}
+	
+	public int determinant()
+	{
+		
+	}
+	
+	public String toString()
+	{
+		
+	}
+	
+	public int getSize()
+	{
+		
+	}
+}

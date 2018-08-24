@@ -1,0 +1,14 @@
+
+public class MatrixElement {
+	
+	int row;
+	int col;
+	int data;
+	
+	public MatrixElement(int row, int col, int data)
+	{
+		this.row = row;
+		this.col = col;
+		this.data = data;
+	}
+}

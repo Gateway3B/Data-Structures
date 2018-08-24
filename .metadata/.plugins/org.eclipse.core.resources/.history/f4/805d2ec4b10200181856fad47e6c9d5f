@@ -1,0 +1,57 @@
+import java.util.LinkedList;
+
+public class Matrix {
+	
+	int size;
+	LinkedList<MatrixElement> matrix = new LinkedList<MatrixElement>();
+	
+	public Matrix(int size)
+	{
+		this.size = size;
+	}
+	
+	public void clear()
+	{
+		
+	}
+	
+	public void setSize()
+	{
+		
+	}
+	
+	public void setElement()
+	{
+		
+	}
+	
+	public void removeElement()
+	{
+		
+	}
+
+	public int getElement()
+	{
+		return 0;
+	}
+	
+	public Matrix minor()
+	{
+		
+	}
+	
+	public int determinant()
+	{
+		
+	}
+	
+	public String toString()
+	{
+		
+	}
+	
+	public int getSize()
+	{
+		
+	}
+}

@@ -1,0 +1,5 @@
+import HuffmanEncoder.HuffTree;
+
+public class HuffTree {
+
+}

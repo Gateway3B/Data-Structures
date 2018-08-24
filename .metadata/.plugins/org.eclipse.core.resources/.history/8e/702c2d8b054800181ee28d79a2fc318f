@@ -1,0 +1,202 @@
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
+public class HuffmanEncoder implements HuffmanCoding{
+	
+	//Comparator that allows for the arraylist to be sorted by character instead of frequency.
+	public class Sort2 {
+	    final Comparator<HuffTree> comp2 = new Comparator<HuffTree>() {
+	        public int compare(HuffTree e1, HuffTree e2) {
+	            return e1.getChar()-e2.getChar();
+	        }
+	    };
+	}
+	
+	public ArrayList<HuffTree> getElements(File inputFile)
+	{
+		ArrayList<HuffTree> freq = new ArrayList<HuffTree>();
+		int letter;
+		BufferedReader bufferedReader = null;
+		try {
+			FileReader read = new FileReader(inputFile);
+			bufferedReader = new BufferedReader(read);
+			while((letter = bufferedReader.read()) != -1)
+			{
+				boolean add = true;
+				for(HuffTree e : freq)
+				{
+					if(e.checkChar(letter))
+					{
+						e.incFreq();
+						add = false;
+					}
+				}
+				if(add)
+				{
+					freq.add(new HuffTree(letter));
+				}
+			}
+			bufferedReader.close();
+		} catch (IOException e)
+		{
+			System.out.println("IOException Error");
+		}
+		return freq;
+	}
+	
+	//Reads the input file and both returns the frequency of each character as a printed string and saves them in huffElements.
+	public String getFrequencies(File inputFile) 
+	{
+		ArrayList<HuffTree> elements = getElements(inputFile);
+		
+		Sort2 c = new Sort2();
+		Collections.sort(elements, c.comp2);
+				
+		String freqChart = new String();
+		
+		for(HuffTree e : elements)
+		{
+			freqChart += e.toString();
+		}
+		
+		
+		System.out.println(freqChart);
+		return freqChart;
+	}
+
+	//Creates a huffTree out of an input file.
+	public HuffTree buildTree(File inputFile)
+	{
+		ArrayList<HuffTree> elements = getElements(inputFile);
+		return huffBuild(elements);
+	}
+	
+	//Helper class that does the actual building of the huffTree.
+	public HuffTree huffBuild(ArrayList<HuffTree> freq)
+	{
+		if(freq.size() == 1)
+		{
+			return freq.get(0);
+		}
+		Collections.sort(freq);
+		HuffTree e = new HuffTree(-1);
+		e.setRight(freq.get(1));
+		e.setLeft(freq.get(0));
+		e.setFreq(e.getRight().getFreq() + e.getLeft().getFreq());
+		e.makeCode();
+		freq.remove(0);
+		freq.remove(0);
+		freq.add(e);
+		return huffBuild(freq);
+	}
+	
+	//Breaks a formed huffTree in order to get a list of huffElements with their huffTree codes.
+	public ArrayList<HuffTree> huffBreak(ArrayList<HuffTree> freq)
+	{
+		for(HuffTree e : freq)
+		{
+			if(e.checkChar(-1))
+			{
+				freq.add(freq.indexOf(e), e.getRight());
+				freq.add(freq.indexOf(e), e.getLeft());
+				freq.remove(e);
+				huffBreak(freq);
+				break;
+			}
+		}
+		Collections.sort(freq);
+		Collections.reverse(freq);
+		return freq;
+	}
+
+	//Takes an input file and its huffTree and generates a code of 1s and 0s.
+	public String encodeFile(File inputFile, HuffTree huffTree)
+	{
+		ArrayList<HuffTree> freq = new ArrayList<HuffTree>();
+		freq.add(huffTree);
+		freq = huffBreak(freq);
+		String code = new String();
+		int letter;
+		BufferedReader bufferedReader = null;
+		try {
+			FileReader read = new FileReader(inputFile);
+			bufferedReader = new BufferedReader(read);
+			while((letter = bufferedReader.read()) != -1)
+			{
+				for(HuffTree e : freq)
+				{
+					if(e.checkChar(letter))
+					{
+						code += e.getCode();
+						break;
+					}
+				}
+			}
+			bufferedReader.close();
+		} catch (IOException e)
+		{
+			System.out.println("IOException Error");
+		}
+		return code;
+	}
+
+	//Takes an input of a code and a huffTree and outputs the decoded file.
+	public String decodeFile(String code, HuffTree huffTree)
+	{
+		HuffTree target = huffTree;
+		String deCode = new String();
+		for(int i = 0; i < code.length(); ++i)
+		{
+			if(!(target.checkChar(-1)))
+			{		
+				deCode += (char)target.getChar();
+				target = huffTree;
+			}
+			if(code.charAt(i) == '1')
+			{
+				target = target.getRight();
+			}
+			
+			if(code.charAt(i) == '0')
+			{
+				target = target.getLeft();
+			}
+		}
+		deCode += (char)target.getChar();
+		return deCode;
+	}
+
+	//Prints characters and their codes as saved in arraylist freq.
+	public String traverseHuffmanTree(HuffTree huffTree)
+	{
+		ArrayList<HuffTree> freq= new ArrayList<HuffTree>();
+		freq.add(huffTree);
+		freq = huffBreak(freq);
+		Sort2 c = new Sort2();
+		Collections.sort(freq, c.comp2);
+		String codes = new String();
+		for(HuffTree e : freq)
+		{
+			codes += (char)e.getChar() + " " + e.getCode() + "\n";
+		}
+		System.out.println(codes);
+		return codes;
+	}
+
+	public static void main(String[] args) throws IOException
+	{
+		HuffmanEncoder a = new HuffmanEncoder();
+		File b = new File("illiad.txt");
+		HuffTree e = a.buildTree(b);
+		String t = a.encodeFile(b, e);
+		System.out.println(t);
+		System.out.println(a.decodeFile(t, e));
+		System.out.println(a.traverseHuffmanTree(e));
+		
+	}
+}
